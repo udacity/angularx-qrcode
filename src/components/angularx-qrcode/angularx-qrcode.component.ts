@@ -6,13 +6,13 @@ import {
   OnChanges,
   OnInit,
   SimpleChange,
+  AfterViewInit,
   Inject,
-  PLATFORM_ID,
-  AfterViewInit
+  PLATFORM_ID
 } from '@angular/core';
 
 declare var require: any;
-let QRCode: any;
+var QRCode: any = undefined;
 
 import { isPlatformServer } from '@angular/common';
 
@@ -38,34 +38,37 @@ export class QRCodeComponent implements OnChanges, OnInit, AfterViewInit {
 
   constructor(
     public el: ElementRef,
-    @Inject(PLATFORM_ID) private readonly platformId: any,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) { }
 
-  public ngOnInit() {}
+  public ngOnInit() {
+  }
 
   public ngAfterViewInit() {
     if (isPlatformServer(this.platformId)) {
       return;
     }
-    if (!QRCode) {
-      QRCode = require('qrcodejs2');
-    }
-    try {
-      if (!this.isValidQrCodeText(this.qrdata)) {
-        throw new Error('Empty QR Code data');
+    else {
+      if (!QRCode) {
+        QRCode = require('qrcodejs2');
       }
+      try {
+        if (!this.isValidQrCodeText(this.qrdata)) {
+          throw new Error('Empty QR Code data');
+        }
 
-      this.qrcode = new QRCode(this.el.nativeElement, {
-        colorDark: this.colordark,
-        colorLight: this.colorlight,
-        correctLevel: QRCode.CorrectLevel[this.level.toString()],
-        height: this.size,
-        text: this.qrdata || ' ',
-        useSVG: this.usesvg,
-        width: this.size,
-      });
-    } catch (e) {
-      console.error('Error generating QR Code: ' + e.message);
+        this.qrcode = new QRCode(this.el.nativeElement, {
+          colorDark: this.colordark,
+          colorLight: this.colorlight,
+          correctLevel: QRCode.CorrectLevel[this.level.toString()],
+          height: this.size,
+          text: this.qrdata || ' ',
+          useSVG: this.usesvg,
+          width: this.size,
+        });
+      } catch (e) {
+        console.error('Error generating QR Code: ' + e.message);
+      }
     }
   }
 
