@@ -12,9 +12,9 @@ import {
 } from '@angular/core';
 
 declare var require: any;
-var QRCode: any = undefined;
+let QRCode: any;
 
-import { isPlatformServer } from '@angular/common';
+import {isPlatformBrowser} from '@angular/common';
 
 @Component({
   selector: 'qrcode',
@@ -45,10 +45,7 @@ export class QRCodeComponent implements OnChanges, OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    if (isPlatformServer(this.platformId)) {
-      return;
-    }
-    else {
+    if (isPlatformBrowser(this.platformId)) {
       if (!QRCode) {
         QRCode = require('qrcodejs2');
       }
